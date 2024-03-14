@@ -3,6 +3,7 @@
 -- Etage FE
 
 LIBRARY IEEE;
+
 USE IEEE.STD_LOGIC_1164.ALL;
 USE IEEE.NUMERIC_STD.ALL;
 
@@ -19,10 +20,22 @@ architecture etageFE_arch of etageFE is
   signal pc_inter, pc_reg_in, pc_reg_out, sig_pc_plus_4, sig_4: std_logic_vector(31 downto 0);
 begin
 
-  sig_4 <= (2=>'1', others => '0');
+  sig_4 <= (2=>'1', others => '0'); -- 4 en binaire
   
-  -- Architecture à compléter
+  pc_inter <= npc when PCSrc_ER = '1' else npc_fw_br;
+
+  pc_reg_in <= pc_inter when Bpris_EX = '0' else npc_fw_br;
+
+  reg: entity work.Reg32
+    port map(pc_reg_in, pc_reg_out, GEL_LI, '1', clk);
   
+  add: entity work.addComplex
+    port map(pc_reg_out, sig_4, '0', sig_pc_plus_4); -- , '0', '0');
+
+  pc_plus_4 <= sig_pc_plus_4;
+    
+  mem_instr: entity work.inst_mem
+    port map(pc_reg_out, i_FE);
 
 end architecture;
 
