@@ -8,7 +8,8 @@ mem.vhd \
 proc.vhd \
 reg_bank.vhd \
 etages.vhd \
-test_etages.vhd
+test_etagesFE.vhd \
+test_etagesDE.vhd
 
 # Cible par défaut
 all: test
@@ -16,8 +17,8 @@ all: test
 # Règle pour construire le fichier de test
 test: $(VHDL_FILES)
 	$(VHDL_COMPILER) -a $(VHDL_FILES)
-	$(VHDL_COMPILER) -e test_etageFE
-	$(VHDL_COMPILER) -r test_etageFE --vcd=test_etages.vcd
+	$(VHDL_COMPILER) -e test_etageDE
+	$(VHDL_COMPILER) -r test_etageDE --vcd=test_etages.vcd
 
 gtkwave:
 	gtkwave test_etages.vcd

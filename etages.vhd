@@ -63,7 +63,7 @@ architecture etageDE_arch of etageDE is
   signal sigOp1, sigOp2 : std_logic_vector(3 downto 0);
   signal sig_15: std_logic_vector(3 downto 0);
 begin
-  sig_15 <= (15=>'1', others => '0');
+  sig_15 <= "1111";
 
   sigOp1 <= sig_15 when RegSrc(0) = '1' else i_DE(19 downto 16);
   sigOp2 <= i_DE(15 downto 12) when RegSrc(1) = '1' else i_DE(3 downto 0);
@@ -73,8 +73,11 @@ begin
 
   Op3_DE <= i_DE(15 downto 12);
 
-  registre: entity work.Reg32
-    port map(
+  RegisterBank : entity work.RegisterBank
+    port map(sigOp1, Op1, sigOp2, Op2, Op3_ER, WD_ER, pc_plus_4, init, RegWr, clk);
+
+  extension : entity work.extension
+    port map(i_DE(23 downto 0), immSrc, extImm);
 end architecture;
 
 -- -------------------------------------------------
