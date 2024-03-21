@@ -47,18 +47,18 @@ begin
     wait for clkpulse;
     clk <= '1';
 
-    Bpris_EX <= '1';
+    -- Bpris_EX <= '1';
 
     wait for clkpulse;
     clk <= '0';
     
     PCSrc_ER <= '0';
-    Bpris_EX <= '0';
+    -- Bpris_EX <= '0';
 
     wait for clkpulse;
     clk <= '1';
 
-    Bpris_EX <= '1';
+    -- Bpris_EX <= '1';
 
     wait for clkpulse;
     clk <= '0'; -- 4
