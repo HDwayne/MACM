@@ -42,27 +42,48 @@ begin
 
   P_TEST: process
   begin
-    wait for clkpulse;
-    clk <= '0';
-
     -- initialisation inputs
-    i_DE <= ""
-    WD_ER <= ""
-    pc_plus_4 <= ""
-    Op3_ER <= ""
-    RegSrc <= ""
-    immSrc <= ""
-    RegWr <= '0'
-    init <= '1'
+    -- i_DE <= "" -- instruction a decoder
+    -- pc_plus_4 <= "" -- valeur du PC
+    -- RegSrc <= "" -- controle de la source des operandes
+    -- immSrc <= "" -- controle du moe d'extension des immediats
+    -- RegWr <= '0' -- controle de l'ecriture dans banc de registres
+    -- init <= '1' -- initialisation asynchrone des registres
+    
+    -- VERIFICATION ECRITURE REGISTRES
 
+    wait for clkpulse;
+    clk <= '0';
+
+    RegWr <= '1'; -- active l'ecriture dans le registre
+
+    -- Ecrire dans le registre avec Op3 et WD
+    WD_ER <= "00000000000000000000000000001001"; -- donnee a ecrire
+    Op3_ER <= "1000"; -- indice du registre a ecrire a ce cycle
+    
     wait for clkpulse;
     clk <= '1';
     wait for clkpulse;
     clk <= '0';
+
+    -- Ecrire dans le registre avec Op3 et WD
+    WD_ER <= "00000000000000000000000000001111"; -- donnee a ecrire
+    Op3_ER <= "1001"; -- indice du registre a ecrire a ce cycle
+
+    
+    
     wait for clkpulse;
     clk <= '1';
     wait for clkpulse;
-    clk <= '0'; -- 4
+    clk <= '0';
+
+    -- desactiver l'ecriture dans le registre
+    RegWr <= '0';
+    -- VERIFICATION LECTURE REGISTRES
+    i_DE <= "00000000000010010000000000001000";
+    RegSrc <= "00";
+
+    
     wait for clkpulse;
     clk <= '1'; -- 5
     wait for clkpulse;

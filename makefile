@@ -1,29 +1,41 @@
 # Définir le compilateur VHDL
 VHDL_COMPILER=ghdl
 
-# Définir les fichiers VHDL à compiler
-VHDL_FILES=\
-combi.vhd \
-mem.vhd \
-proc.vhd \
-reg_bank.vhd \
-etages.vhd \
-test_etagesFE.vhd \
-test_etagesDE.vhd
+# Directories
+TEST_FOLDER=./test
+SRC_FOLDER=./src
+WAVE_FOLDER=./wave
 
-# Cible par défaut
-all: test
+# Manually specified source files in the precise order required
+SRC_FILES=\
+    $(SRC_FOLDER)/combi.vhd \
+    $(SRC_FOLDER)/mem.vhd \
+    $(SRC_FOLDER)/reg_bank.vhd \
+    $(SRC_FOLDER)/control_unit.vhd \
+    $(SRC_FOLDER)/etages.vhd \
+    $(SRC_FOLDER)/condition_management_unit.vhd \
+    $(SRC_FOLDER)/proc.vhd
 
-# Règle pour construire le fichier de test
-test: $(VHDL_FILES)
-	$(VHDL_COMPILER) -a $(VHDL_FILES)
-	$(VHDL_COMPILER) -e test_etageDE
-	$(VHDL_COMPILER) -r test_etageDE --vcd=test_etages.vcd
+# Test files
+TEST_FILES=$(wildcard $(TEST_FOLDER)/*.vhd)
 
-gtkwave:
-	gtkwave test_etages.vcd
+TESTBENCH ?= testbench
 
-# Règle pour nettoyer les fichiers générés
+.PHONY: compile
+compile:
+	$(VHDL_COMPILER) -i --workdir=$(TEST_FOLDER) $(SRC_FILES) $(TEST_FILES)
+
+.PHONY: elaborate
+elaborate: compile
+	$(VHDL_COMPILER) -m --workdir=$(TEST_FOLDER) $(TESTBENCH)
+
+.PHONY: simulate
+simulate: elaborate
+	$(VHDL_COMPILER) -r --workdir=$(TEST_FOLDER) $(TESTBENCH) --vcd=$(WAVE_FOLDER)/$(TESTBENCH).vcd
+
+.PHONY: all
+all: simulate
+
+.PHONY: clean
 clean:
-	rm -f *.o *.vcd work-obj93.cf
-
+	rm -f $(TEST_FOLDER)/*.o $(TEST_FOLDER)/*.cf $(WAVE_FOLDER)/*.vcd
