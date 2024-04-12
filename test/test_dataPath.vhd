@@ -2,10 +2,10 @@ library IEEE;
 use IEEE.Std_logic_1164.all;
 use IEEE.Numeric_Std.all;
 
-entity dataPath_tb is
-end;
+entity test_dataPath is
+end test_dataPath;
 
-architecture bench of dataPath_tb is
+architecture bench of test_dataPath is
 
   component dataPath
     port(
@@ -23,7 +23,7 @@ architecture bench of dataPath_tb is
 
 begin
 
-  uut: dataPath port map ( clk        => clk,
+  chemin: dataPath port map ( clk        => clk,
                            init       => init,
                            Gel_LI     => Gel_LI,
                            Gel_DI     => Gel_DI,
@@ -40,14 +40,9 @@ begin
                            op3_ME_out => op3_ME_out,
                            op3_RE_out => op3_RE_out );
 
-  stimulus: process
+  P_TEST: process
   begin
-  
-    -- Put initialisation code here
-
-
-    -- Put test bench stimulus code here
-
+    -- A FAIRE.
     wait;
   end process;
 

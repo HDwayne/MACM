@@ -6,7 +6,7 @@ entity test_etageEX is
 end test_etageEX;
 
 architecture behavior of test_etageEX is
-  constant clkpulse : Time := 10 ns; -- 1/2 periode horloge
+  constant clkpulse : Time := 10 ns;
   signal clk : std_logic;
 
   signal Op1_EX, Op2_EX, ExtImm_EX, Res_fwd_ME, Res_fwd_ER : std_logic_vector(31 downto 0);
@@ -38,46 +38,46 @@ begin
 
   P_TEST: process
   begin
-    -- Initialize Inputs
+    -- initialisation des signaux
     Op1_EX <= std_logic_vector(to_unsigned(15, 32));
     Op2_EX <= std_logic_vector(to_unsigned(10, 32));
     ExtImm_EX <= std_logic_vector(to_unsigned(5, 32));
     Res_fwd_ME <= std_logic_vector(to_unsigned(20, 32));
     Res_fwd_ER <= std_logic_vector(to_unsigned(25, 32));
-    ALUCtrl_EX <= "00"; -- Assume this means add in your control unit
-    ALUSrc_EX <= '0'; -- Select Op2_EX as the second operand
-    EA_EX <= "00"; -- No forwarding, use original value from DE stage
-    EB_EX <= "00"; -- No forwarding, use original value from DE stage
-    clk <= '0'; -- Start with a low clock
+    ALUCtrl_EX <= "00"; -- ADD operation
+    ALUSrc_EX <= '0';
+    EA_EX <= "00";
+    EB_EX <= "00";
+    clk <= '0';
     
-    -- Test Scenario 1: Simple ALU operation (Addition)
+    -- Test Scenario 1: Addition
     wait for clkpulse;
     clk <= '1';
     wait for clkpulse;
     clk <= '0';
     assert Res_EX = std_logic_vector(to_unsigned(25, 32)) 
-        report "ALU operation failed: Addition incorrect." severity error;
+        -- report "ALU operation failed: Addition incorrect." severity error;
+        report "ALU addition erreur." severity error;
 
-    -- Test Scenario 2: Immediate selection and ALU operation
-    ALUSrc_EX <= '1'; -- Now select immediate as the second operand
+    -- Test Scenario 2
+    ALUSrc_EX <= '1';
     wait for clkpulse;
     clk <= '1';
     wait for clkpulse;
     clk <= '0';
     assert Res_EX = std_logic_vector(to_unsigned(20, 32)) 
-        report "ALU operation with immediate failed." severity error;
-    ALUSrc_EX <= '0'; -- Reset for next tests
+        report "ALU operation avec immediate erreur." severity error;
+    ALUSrc_EX <= '0';
 
-    -- Test Scenario 3: Forwarding from ME stage
-    EB_EX <= "10"; -- Select forwarding from ME stage
+    -- Test Scenario 3: Forwarding
+    EB_EX <= "10";
     wait for clkpulse;
     clk <= '1';
     wait for clkpulse;
     clk <= '0';
     assert Res_EX = std_logic_vector(to_unsigned(35, 32)) 
-        report "Forwarding from ME stage failed." severity error;
+        report "Forwarding de ME erreur." severity error;
 
-    -- Additional cycles to observe behavior after tests
     wait for clkpulse * 10;
     wait;
   end process P_TEST;

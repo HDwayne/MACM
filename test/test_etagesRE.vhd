@@ -6,7 +6,7 @@ entity test_etageRE is
 end test_etageRE;
 
 architecture behavior of test_etageRE is
-    constant clkpulse : Time := 10 ns; -- 1/2 period of clock
+    constant clkpulse : Time := 10 ns;
     signal clk : std_logic;
 
     signal Res_Mem_RE, Res_ALU_RE : std_logic_vector(31 downto 0);
@@ -28,33 +28,33 @@ begin
 
     P_TEST: process
     begin
-        -- Initialize inputs
-        Res_Mem_RE <= std_logic_vector(to_unsigned(100, 32));  -- Example memory read value
-        Res_ALU_RE <= std_logic_vector(to_unsigned(200, 32));  -- Example ALU result value
-        Op3_RE <= std_logic_vector(to_unsigned(4, 4));  -- Example register index
+        -- Initialisation des entrées
+        Res_Mem_RE <= std_logic_vector(to_unsigned(100, 32));
+        Res_ALU_RE <= std_logic_vector(to_unsigned(200, 32));
+        Op3_RE <= std_logic_vector(to_unsigned(4, 4));
 
-        -- Test scenario 1: Select ALU result
-        MemToReg_RE <= '0';  -- Select ALU result
+        -- Test scenario 1: ALU
+        MemToReg_RE <= '0';
         wait for clkpulse;
-        clk <= '1';  -- Rising edge of clock
+        clk <= '1';
         wait for clkpulse;
-        clk <= '0';  -- Falling edge of clock
+        clk <= '0';
         assert Res_RE = Res_ALU_RE
-            report "ALU result was not correctly selected by Retire stage." severity error;
+            report "Le resultat de l'ALU n'est pas correctement selectionné par l'étage RE." severity error;
 
-        -- Test scenario 2: Select Memory result
-        MemToReg_RE <= '1';  -- Select Memory result
+        -- Test scenario 2: Memoire
+        MemToReg_RE <= '1';
         wait for clkpulse;
-        clk <= '1';  -- Rising edge of clock
+        clk <= '1';
         wait for clkpulse;
-        clk <= '0';  -- Falling edge of clock
+        clk <= '0';
         assert Res_RE = Res_Mem_RE
-            report "Memory result was not correctly selected by Retire stage." severity error;
+            report "Le resultat de la memoire n'est pas correctement selectionné par l'étage RE." severity error;
 
-        -- Check if Op3_RE is forwarded correctly
+        -- Test scenario 3: index du registre 
         assert Op3_RE_out = Op3_RE
-            report "Register index was not correctly forwarded by Retire stage." severity error;
+            report "L'index du registre n'est pas correctement transmis par l'étage RE." severity error;
 
-        wait; -- End simulation
+        wait;
     end process P_TEST;
 end behavior;

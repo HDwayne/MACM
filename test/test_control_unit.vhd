@@ -6,13 +6,12 @@ entity test_controlUnit is
 end test_controlUnit;
 
 architecture behavior of test_controlUnit is
+    constant clkpulse : Time := 10 ns;
+
     signal Instr : std_logic_vector(31 downto 0);
     signal PCSrc, RegWr, MemToReg, MemWr, Branch, CCWr, AluSrc : std_logic;
     signal AluCtrl, ImmSrc, RegSrc : std_logic_vector(1 downto 0);
     signal Cond : std_logic_vector(3 downto 0);
-    
-    constant clkpulse : Time := 10 ns; -- Clock period for simulation delay
-    
 begin
     UUT: entity work.control_unit
         port map(
@@ -32,124 +31,123 @@ begin
 
 P_TEST: process
 begin
-    -- Initialize
+    -- initialisation des signaux
     Instr <= (others => '0');
     wait for clkpulse;
 
-    -- Test Branch Operation
+    -- Branch
     -- 10 (Branch) XXXX (b) => 00 (+)
     Instr <= "0000" & "10" & "0" & "0000" & "000000000000000000000";
     wait for clkpulse;
-    assert AluCtrl = "00" report "Branch Operation failed: AluCtrl should be 00" severity error;
+    assert AluCtrl = "00" report "Branch operation erreur" severity error;
 
-    -- Test ADD Operation
+    -- ADD
     -- 00 (Calcul) 0100 (ADD) => 00 (+)
     Instr <= "0000" & "00" & "0" & "0100" & "000000000000000000000";
     wait for clkpulse;
-    assert AluCtrl = "00" report "ADD Operation failed: AluCtrl should be 00" severity error;
+    assert AluCtrl = "00" report "ADD operation erreur" severity error;
 
-    -- Test SUB Operation
+    -- SUB
     -- 00 (Calcul) 0010 (SUB) => 01 (-)
     Instr <= "0000" & "00" & "0" & "0010" & "000000000000000000000";
     wait for clkpulse;
-    assert AluCtrl = "01" report "SUB Operation failed: AluCtrl should be 01" severity error;
+    assert AluCtrl = "01" report "SUB Operation erreur" severity error;
 
-    -- Test AND Operation
+    -- AND
     -- 00 (Calcul) 0000 (AND) => 10 (Et)
     Instr <= "0000" & "00" & "0" & "0000" & "000000000000000000000";
     wait for clkpulse;
-    assert AluCtrl = "10" report "AND Operation failed: AluCtrl should be 10" severity error;
+    assert AluCtrl = "10" report "AND Operation erreur" severity error;
 
-    -- Test ORR Operation
+    -- ORR
     -- 00 (Calcul) 1100 (ORR) => 11 (Ou)
     Instr <= "0000" & "00" & "0" & "1100" & "000000000000000000000";
     wait for clkpulse;
-    assert AluCtrl = "11" report "ORR Operation failed: AluCtrl should be 11" severity error;
+    assert AluCtrl = "11" report "ORR Operation erreur" severity error;
 
-    -- Test CMP Operation
+    -- CMP
     -- 00 (Calcul) 1010 (CMP) => 01 (-)
     Instr <= "0000" & "00" & "0" & "1010" & "000000000000000000000";
     wait for clkpulse;
-    assert AluCtrl = "01" report "CMP Operation failed: AluCtrl should be 01" severity error;
+    assert AluCtrl = "01" report "CMP Operation erreur" severity error;
 
-    -- Test LDR Operation
+    -- LDR
     -- 01 (Memoire) X0XX (LDR/STR) => 00 (+)
-    Instr <= "0000" & "01" & "0" & "0000" & "000000000000000000000";  -- Assuming X0XX pattern is 0XX0 for demonstration
+    Instr <= "0000" & "01" & "0" & "0000" & "000000000000000000000";
     wait for clkpulse;
-    assert AluCtrl = "00" report "LDR Operation failed: AluCtrl should be 00" severity error;
+    assert AluCtrl = "00" report "LDR Operation erreur" severity error;
 
-    -- Test STR Operation
+    -- STR
     -- 01 (Memoire) X1XX (LDR/STR) => 01 (-)
-    Instr <= "0000" & "01" & "0" & "0100" & "000000000000000000000";  -- Assuming X1XX pattern is 1XX0 for demonstration
+    Instr <= "0000" & "01" & "0" & "0100" & "000000000000000000000";
     wait for clkpulse;
-    assert AluCtrl = "01" report "STR Operation failed: AluCtrl should be 01" severity error;
+    assert AluCtrl = "01" report "STR Operation erreur" severity error;
     
     
     
-    
-
-    -- Test reg/reg operation
+    -- reg/reg operation
     -- 00 reg/reg | 0 | X => Branch: 0, MemToReg: 0, MemWr: 0, AluSrc: 0, ImmSrc: XX, RegWr: 1, RegSrc: 00
     Instr <= "0000" & "00" & "0" & "0000" & "0" & "00000000000000000000"; -- Opcode 00, reg/reg
     wait for clkpulse;
     assert (Branch = '0' and MemToReg = '0' and MemWr = '0' and AluSrc = '0' and RegWr = '1' and RegSrc = "00")
-        report "reg/reg operation control signals failed" severity error;
+        report "reg/reg operation erreur" severity error;
 
-    -- Test CMP operation
+    -- CMP operation
     -- 00 (CMP) | 0 | 1 => Branch: 0, MemToReg: 0, MemWr: 0, AluSrc: 0, ImmSrc: XX, RegWr: 0, RegSrc: 00
     Instr <= "0000" & "00" & "0" & "0000" & "1" & "00000000000000000000"; -- Opcode 00, CMP
     wait for clkpulse;
     assert (Branch = '0')
-        report "CMP operation control signals failed" severity error;
+        report "CMP operation erreur" severity error;
     assert (MemToReg = '0')
-        report "CMP operation control signals failed" severity error;
+        report "CMP operation erreur" severity error;
     assert (MemWr = '0')
-        report "CMP operation control signals failed" severity error;
+        report "CMP operation erreur" severity error;
     assert (AluSrc = '0')
-        report "CMP operation control signals failed" severity error;
+        report "CMP operation erreur" severity error;
     assert (ImmSrc = "00")
-        report "CMP operation control signals failed" severity error;
+        report "CMP operation erreur" severity error;
     -- assert (RegWr = '0')
-    --     report "CMP operation control signals failed" severity error;
+    --     report "CMP operation erreur" severity error;
 
-    -- Test reg/imm operation
+    -- reg/imm operation
     -- 00 reg/imm | 1 | X => Branch: 0, MemToReg: 0, MemWr: 0, AluSrc: 1, ImmSrc: 00, RegWr: 1, RegSrc: X0
     Instr <= "0000" & "00" & "1" & "0000" & "0" & "00000000000000000000"; -- Opcode 00, reg/imm
     wait for clkpulse;
     assert (Branch = '0' and MemToReg = '0' and MemWr = '0' and AluSrc = '1' and ImmSrc = "00" and RegWr = '1' and RegSrc(1) = '0')
-        report "reg/imm operation control signals failed" severity error;
+        report "reg/imm operation erreur" severity error;
 
-    -- Test LDR operation
+    -- LDR operation
     -- 01 (LDR) | X | 1 => Branch: 0, MemToReg: 1, MemWr: 0, AluSrc: 1, ImmSrc: 01, RegWr: 1, RegSrc: X0
     Instr <= "0000" & "01" & "0" & "0000" & "1" & "00000000000000000000"; -- Opcode 01, LDR
     wait for clkpulse;
     assert (Branch = '0' and MemToReg = '1' and MemWr = '0' and AluSrc = '1' and ImmSrc = "01" and RegWr = '1' and RegSrc(1) = '0')
-        report "LDR operation control signals failed" severity error;
+        report "LDR operation erreur" severity error;
 
-    -- Test STR operation
+    -- STR operation
     -- 01 (STR) | X | 0 => Branch: 0, MemToReg: X, MemWr: 1, AluSrc: 1, ImmSrc: 01, RegWr: 0, RegSrc: 10
     Instr <= "0000" & "01" & "0" & "0000" & "0" & "00000000000000000000"; -- Opcode 01, STR
     wait for clkpulse;
     assert (Branch = '0' and MemWr = '1' and AluSrc = '1' and ImmSrc = "01" and RegWr = '0' and RegSrc = "10")
-        report "STR operation control signals failed" severity error;
+        report "STR operation erreur" severity error;
 
-    -- Test Branch operation
+    -- Branch operation
     -- 10 (B) | X | X => Branch: 1, MemToReg: 0, MemWr: 0, AluSrc: 1, ImmSrc: 10, RegWr: 0, RegSrc: X1
     Instr <= "0000" & "10" & "0" & "0000" & "0" & "00000000000000000000"; -- Opcode 10, Branch
     wait for clkpulse;
     assert (Branch = '1')
-        report "Branch operation control signals failed" severity error;
+        report "Branch operation erreur" severity error;
     assert (MemToReg = '0')
-        report "Branch operation control signals failed" severity error;
+        report "Branch operation erreur" severity error;
     assert (MemWr = '0')
-        report "Branch operation control signals failed" severity error;
+        report "Branch operation erreur" severity error;
     assert (AluSrc = '1')
-        report "Branch operation control signals failed" severity error;
+        report "Branch operation erreur" severity error;
     assert (ImmSrc = "10")
-        report "Branch operation control signals failed" severity error;
+        report "Branch operation erreur" severity error;
     -- assert (RegWr = '0')
-    --     report "Branch operation control signals failed" severity error;
+    --     report "Branch operation erreur" severity error;
 
+  -- A FAIRE SI BESOIN.
 
   -- INPUTS                                                           | OUTPUTS
   -- Instr <27..26> | Instr <25> | Instr <20> | Instr <15..12>        | PCSrc 
@@ -173,7 +171,7 @@ begin
   -- 01 (STR)       | X          | 0          | 0
   -- 10 (B)         | X          | X          | 0
 
-    wait; -- End simulation
+    wait;
 end process P_TEST;
 
 

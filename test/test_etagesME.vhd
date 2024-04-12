@@ -25,37 +25,34 @@ begin
             data => Res_Mem_ME
         );
 
-    -- Test scenarios
     P_TEST: process
     begin
-        -- Initialize inputs
+        -- initialisation des entrées
         addr <= std_logic_vector(to_unsigned(1, 32));  -- Set initial address
         WD_ME <= std_logic_vector(to_unsigned(123, 32));  -- Set initial data to write
 
-        -- Test scenario 1: Write to memory
-        MemWR_Mem <= '1'; -- Enable write operation
-        wait for clkpulse;
-        clk <= '1';  -- Rising edge of clock to trigger write
-        wait for clkpulse;
-        clk <= '0';  -- Falling edge of clock
-        MemWR_Mem <= '0'; -- Disable write operation for next operations
-
-        -- Test scenario 2: Read from memory
-        wait for clkpulse;
-        clk <= '1';  -- Rising edge of clock
-        wait for clkpulse;
-        clk <= '0';  -- Falling edge of clock
-        
-        -- Check if memory read value matches the written value
-        assert Res_Mem_ME = WD_ME
-            report "Memory read operation failed: Data mismatch on read back." severity error;
-
-        -- Additional test cycle
+        -- Test scenario 1: Ecrire dans la mémoire
+        MemWR_Mem <= '1';
         wait for clkpulse;
         clk <= '1';
         wait for clkpulse;
         clk <= '0';
+        MemWR_Mem <= '0';
 
-        wait; -- End simulation
+        -- Test scenario 2: Lire depuis la mémoire
+        wait for clkpulse;
+        clk <= '1';
+        wait for clkpulse;
+        clk <= '0';
+        
+        -- Verification si la donnée lue est la même que celle écrite
+        assert Res_Mem_ME = WD_ME
+            report "Operation de lecture de la mémoire a échoué: Données différentes lors de la lecture." severity error;
+
+        wait for clkpulse;
+        clk <= '1';
+        wait for clkpulse;
+        clk <= '0';
+        wait;
     end process P_TEST;
 end behavior;

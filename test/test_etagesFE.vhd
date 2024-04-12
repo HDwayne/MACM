@@ -17,23 +17,20 @@ begin
     port map(
       clk => clk,
       
-      -- input parameters
       PCSrc_ER => PCSrc_ER,
       Bpris_EX => Bpris_EX,
       GEL_LI => GEL_LI,
 
-      -- input values
       npc => npc,
       npc_fw_br => npc_fw_br,
       
-      -- output
       pc_plus_4 => pc_plus_4,
       i_FE => i_FE
     );
 
   P_TEST: process
   begin
-    --instanciation
+    -- instanciation
     npc <= (others => '0');
     npc_fw_br <= (others => '1');
     GEL_LI <= '1';
@@ -66,11 +63,6 @@ begin
     clk <= '1'; -- 5
     wait for clkpulse;
     clk <= '0'; -- 6
-    wait for clkpulse;
-    clk <= '1'; -- 7
-    wait for clkpulse;
-    clk <= '0'; -- 8
-
     wait for 250 ns;
     wait;
 
